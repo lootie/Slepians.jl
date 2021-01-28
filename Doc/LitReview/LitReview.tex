@@ -1,0 +1,105 @@
+% !BIB TS-program = biber
+
+\documentclass{article}
+
+\usepackage{amsmath,esint}                                
+\usepackage[pdftex]{graphicx}
+\usepackage{amssymb,amsfonts}
+\usepackage{epstopdf}
+\usepackage{fancyhdr,datetime,color}
+\usepackage{booktabs,mathrsfs}
+\usepackage{hyperref}
+\usepackage[margin=0.5in]{geometry}
+	\usepackage[backend=biber,
+    bibencoding=utf8,
+    refsection=section,
+    style=alphabetic,
+    sorting=debug, 
+    defernumbers=true,
+    isbn=false,
+    doi=true,
+    url=false,
+    clearlang=true
+]{biblatex}
+
+\DeclareFieldFormat{labelalpha}{\thefield{entrykey}}
+\DeclareFieldFormat{extraalpha}{}
+
+%\input{../Input/macros}
+\input{../Bibliography/journal_abbr.tex}
+
+\renewbibmacro{in:}{ \ifentrytype{article}{}{\printtext{\bibstring{in}\intitlepunct}}}
+\addbibresource{../../../../Collected.bib}
+\addbibresource{../Bibliography/nfftbib.bib}
+\addbibresource{../Bibliography/gravity.bib}
+
+\newtheorem{note}{Note}
+
+\begin{document}
+
+\title{Literature Review: Coherence with Gaps}
+
+\author{Charlotte~L.~Haley}
+
+\maketitle
+\tableofcontents
+
+\section{Basic Papers}
+
+  \subsection{Spectrum Estimation and Harmonic Analysis}
+
+  The relevant material here is in \cite[\S XIV]{t82}. 
+
+  When the lines and the background noise have commensurate magnitude: ``cases commonly occur where
+  both the background noise process and the line components are independently coherent, but, because
+  their cross-spectra have different phases, their sum appears incoherent"
+
+  \subsection{Coherence and Time Delay Estimation}
+
+  Main points:
+  \begin{enumerate}
+  \item Compares tapering (Blackman-Tukey), WOSA, and lag-window smoothing (Carter and Nuttall). 
+  \item Expressions for bias and variance of MSC estimates are given in Table 1, 2. 
+  \item Bias due to rapidly changing phase 
+      `` Koopmans \cite{koopmans} notes that if the phase angle of the cross power spectrum is a
+  rapidly varying function of frequency at the frequency that the coherence is to be estimated, the
+  estimated coherence (in particular, MSC) can be biased downward to such an extent that a strong
+  coherence is masked"
+    
+    Rapidly changing phase may be due to a misalignment or lag of D time units and duration T.
+  Carter calculates the bias in this case. For example, if 1 D/T= 0.25, the expected value of the
+  estimated MSC is about one-half of its true value.
+
+  \end{enumerate}
+
+  \begin{note}
+  \cite{carter87} is a review paper on coherence estimation cited by \cite{TC91} which has \emph{many} citations. 
+  It references \cite{lee83} which is the first jackknifing of coherency. 
+  \end{note}
+
+  \subsection{Time Series: Theory and Methods}
+  Brockwell and Davis's 1991 book (the only e-resource for this seems to be google
+books
+\url{https://books.google.com/books?hl=en&lr=&id=ZW_ThhYQiXIC&oi=fnd&pg=PR7&dq=time+series+theory+and+methods+1991&ots=g-hXlUCNh9&sig=T6FawataQosk_pIG_11GM9ikNsQ#v=onepage&q=time%20series%20theory%20and%20methods%201991&f=false})
+has a discussion of coherence estimation (p 438) with lagged window estimators. The
+weight function used is (p 447)
+
+\printbibliography[heading=subbibliography,segment=\therefsegment]
+
+\clearpage
+
+\section{Meteorology Papers}
+
+  \subsection{ \texttt{smith2006theory} }
+  This is a book on mesocale atmospheric phenomena \cite{smith2006theory}.
+
+  \subsection{ \texttt{einaudi1981interaction}}
+  This is a case study from a 300m tower where they had oscillations near 2-6 minutes
+\cite{einaudi1981interaction}.
+
+  \subsection{ \texttt{finnigan1981interaction}}
+  This guy goes with the above \cite{finnigan1981interaction}.
+
+\printbibliography[heading=subbibliography,segment=\therefsegment]
+
+\end{document}  
