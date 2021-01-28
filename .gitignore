@@ -1,4 +1,5 @@
 
+Doc/main.pdf
 Manifest.toml
 
 *.swp
@@ -25,7 +26,6 @@ Manifest.toml
 *.thm
 *.avi
 *.fig
-*.pdf
 *.fls
 *.texmk
 *.DS_Store
