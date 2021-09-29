@@ -73,11 +73,12 @@ function customsleps(M, Kp, szs; prec=1.0e-8, exact=false, lvl=6, maxrank=0, no 
   # Solve the eigenvalue problem (86) to obtain the slepians at the quad nodes:
   s     = eigsolve(z->sqwt.*(K*(sqwt.*z)), prod(szs), M, :LM, issymmetric=true)
 
+  outputsize = (int == nothing) ? szs : int
   # Prepare even grid points, compute slepians at those points:
-  evpts = vec(collect(product([range(-1.0, 1.0, length=s) for s in ((int == nothing) ? szs : int)]...)))
+  evpts = vec(collect(product([range(-1.0, 1.0, length=s) for s in outputsize]...)))
   _K2   = KernelMatrix(evpts, no, Kp, dfn)
   K2    = exact ? full(_K2) : RHMatrix.rhodlr(_K2, lvl, prec, maxrank)
   sleps = [sqwt.*(K2*x[2])./x[1] for x in zip(s[1], s[2])]
 
-  return s[1], [reshape(sp, szs...) for sp in sleps]
+  return s[1], [reshape(sp, outputsize...) for sp in sleps]
 end
