@@ -53,7 +53,7 @@ gauss-legendre nodes in the no and sqwt field.
 function customsleps(M, Kp, szs; prec=1.0e-8, exact=false, lvl=6, maxrank=0, no = nothing, sqwt = nothing,
     int = nothing)
   if typeof(Kp) <: Float64 
-    return customsleps(M, [Kp], szs, prec=prec, exact=exact, lvl=lvl, maxrank=maxrank, no = no, sqwt = sqwt)
+    return customsleps(M, [Kp], szs, prec=prec, exact=exact, lvl=lvl, maxrank=maxrank, int = int, no = no, sqwt = sqwt)
   end
   length(szs) > 1 || @warn("Don't use this function for 1D slepians...")
 
@@ -74,11 +74,11 @@ function customsleps(M, Kp, szs; prec=1.0e-8, exact=false, lvl=6, maxrank=0, no 
   s     = eigsolve(z->sqwt.*(K*(sqwt.*z)), prod(szs), M, :LM, issymmetric=true)
 
   outputsize = (int == nothing) ? szs : int
-  # Prepare even grid points, compute slepians at those points:
+  # Prepare even grid points, compute Slepians at those points:
   evpts = vec(collect(product([range(-1.0, 1.0, length=s) for s in outputsize]...)))
   _K2   = KernelMatrix(evpts, no, Kp, dfn)
   K2    = exact ? full(_K2) : RHMatrix.rhodlr(_K2, lvl, prec, maxrank)
-  sleps = [sqwt.*(K2*x[2])./x[1] for x in zip(s[1], s[2])]
+  sleps = [(K2*(sqwt.*x[2]))./x[1] for x in zip(s[1], s[2])]
 
   return s[1], [reshape(sp, outputsize...) for sp in sleps]
 end
