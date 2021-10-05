@@ -4,7 +4,6 @@ module Slepians
   using FFTW, LinearAlgebra, SpecialFuncions, Arpack, KrylovKit, KernelMatrices 
 
   include("RHmatrix.jl")
-  export .RHMatrix
 
   include("dpss.jl")
   export dpss_tapers
