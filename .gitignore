@@ -1,5 +1,8 @@
 
-Doc/main.pdf
+Doc/*
+Refs/*
+Slides/*
+
 Manifest.toml
 
 *.swp
