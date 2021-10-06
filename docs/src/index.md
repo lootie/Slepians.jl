@@ -11,7 +11,7 @@ main functions here.
 # Index of functions
 
 ```@docs
-get_dpss
+dpss_tapers
 gpss
 customsleps
 ```
