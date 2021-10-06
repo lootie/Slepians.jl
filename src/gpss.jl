@@ -147,4 +147,3 @@ function gpss_orth(w::Float64, k::Int64, t::Union{Vector{Int64},Vector{Float64}}
   return (lambda, u)
 end
 
-""" 
