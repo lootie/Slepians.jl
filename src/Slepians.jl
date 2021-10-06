@@ -1,7 +1,7 @@
 module Slepians
 
   using FastGaussQuadrature, IterTools 
-  using FFTW, LinearAlgebra, SpecialFunctions, Arpack, KrylovKit #, KernelMatrices 
+  using FFTW, LinearAlgebra, SpecialFunctions, Arpack, KrylovKit, KernelMatrices 
 
   include("RHmatrix.jl")
   using .RHMatrix
