@@ -3,6 +3,8 @@ Doc/*
 Refs/*
 Slides/*
 
+docs/build/*
+
 Manifest.toml
 
 *.swp

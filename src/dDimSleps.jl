@@ -1,7 +1,7 @@
 # The underlying Kernel function, equation 54c in Simons & Wang 2011.
 function dfn(x, y, Kp)
   x == y && return abs2(Kp[])/(4.0*pi)
-  Kp[]*besselj1(Kp[]*sqrt(sum(abs2, x.-y)))/(2.0*pi*sqrt(sum(abs2, x.-y)))
+  Kp[] * besselj1(Kp[] * sqrt(sum(abs2, x .- y)))/(2.0 * pi * sqrt(sum(abs2, x .- y)))
 end
 
 
@@ -50,12 +50,15 @@ If you do not supply your own nodes, the region of interest in space is assumed 
 be rectangular. If you want something other than this, you'll provide your own
 gauss-legendre nodes in the no and sqwt field.
 """
-function customsleps(M, Kp, szs; prec=1.0e-8, exact=false, lvl=6, maxrank=0, no = nothing, sqwt = nothing,
-    int = nothing)
+function customsleps(M, Kp, szs; prec = 1.0e-8, exact = false, lvl = 6, maxrank = 0, 
+    no = nothing, sqwt = nothing, int = nothing)
+
   if typeof(Kp) <: Float64 
-    return customsleps(M, [Kp], szs, prec=prec, exact=exact, lvl=lvl, maxrank=maxrank, int = int, no = no, sqwt = sqwt)
+    return customsleps(M, [Kp], szs, prec = prec, exact = exact, lvl = lvl, 
+                       maxrank = maxrank, int = int, no = no, sqwt = sqwt)
   end
-  length(szs) > 1 || @warn("Don't use this function for 1D slepians...")
+
+  length(szs) > 1 || @warn("Don't use this function for 1D Slepians...")
 
   if (no == nothing)||(sqwt == nothing)
       # Create quadrature nodes and weights for each dimension:
@@ -71,14 +74,15 @@ function customsleps(M, Kp, szs; prec=1.0e-8, exact=false, lvl=6, maxrank=0, no 
   K     = exact ? full(_K) : RHMatrix.rhodlr(_K, lvl, prec, maxrank)
 
   # Solve the eigenvalue problem (86) to obtain the slepians at the quad nodes:
-  s     = eigsolve(z->sqwt.*(K*(sqwt.*z)), prod(szs), M, :LM, issymmetric=true)
+  s     = eigsolve(z -> sqwt .* (K * (sqwt .* z)), prod(szs), M, :LM, 
+                   issymmetric = true)
 
   outputsize = (int == nothing) ? szs : int
   # Prepare even grid points, compute Slepians at those points:
-  evpts = vec(collect(product([range(-1.0, 1.0, length=s) for s in outputsize]...)))
+  evpts = vec(collect(product([range(-1.0, 1.0, length = s) for s in outputsize]...)))
   _K2   = KernelMatrix(evpts, no, Kp, dfn)
   K2    = exact ? full(_K2) : RHMatrix.rhodlr(_K2, lvl, prec, maxrank)
-  sleps = [(K2*(sqwt.*x[2]))./x[1] for x in zip(s[1], s[2])]
+  sleps = [(K2 * (sqwt .* x[2])) ./ x[1] for x in zip(s[1], s[2])]
 
   return s[1], [reshape(sp, outputsize...) for sp in sleps]
 end
