@@ -1,6 +1,21 @@
 
 # GNU GPL v2 licenced to C. Haley and C. Geoga 12/2019
 
+function conv(x,y)
+  @assert length(x) == length(y) "This convolution only supports equal length"
+  len = nextprod([2,3,5,7], 2*length(x)-1)
+  (work1, work2, plan) = get_plan(len)
+  fill!(work1, zero(ComplexF64))
+  fill!(work2, zero(ComplexF64))
+  work1[1:length(x)] .= x
+  work2[1:length(y)] .= y
+  plan*work1
+  plan*work2
+  work1.*=work2
+  plan\work1
+  isreal(x) ? real(work1) : work1
+end
+
 """ Eigenvalues/concentrations for the  Slepian sequences.   
 They are computed as given in Percival 390, BUT THERE IS A TYPO IN PERCIVAL 390 """
 function dpss_eigval(dpVecs, n, nw, ntapers)
