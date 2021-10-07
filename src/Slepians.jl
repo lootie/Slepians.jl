@@ -3,7 +3,7 @@ module Slepians
   using FastGaussQuadrature, IterTools 
   using FFTW, LinearAlgebra, SpecialFunctions, Arpack, KrylovKit, KernelMatrices 
 
-  include("RHmatrix.jl")
+  include("RHMatrix.jl")
   using .RHMatrix
 
   include("dpss.jl")
