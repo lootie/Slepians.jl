@@ -21,6 +21,7 @@ RecipesBase = "1"
 FastGaussQuadrature = "0.4"
 SpecialFunctions = "1"
 KrylovKit = "0.5"
+Arpack = "0.5"
 
 [extras]
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
