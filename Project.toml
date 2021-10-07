@@ -24,6 +24,7 @@ KrylovKit = "0.5"
 Arpack = "0.5"
 FFTW = "1"
 IterTools = "1"
+FINUFFT = "2"
 
 [extras]
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
