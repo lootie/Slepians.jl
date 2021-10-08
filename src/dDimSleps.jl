@@ -20,7 +20,7 @@ end
 
 -Kp   (A concentration measure like NW in the 1D case)
 
--szs  (An AbstractArray of sizes for the QUADRATURE problem)
+-szs  (An AbstractArray of sizes for the quadrature problem)
 
 **KWARGS:
 
@@ -58,7 +58,7 @@ function customsleps(M, Kp, szs; prec = 1.0e-8, exact = false, lvl = 6, maxrank 
                        maxrank = maxrank, int = int, no = no, sqwt = sqwt)
   end
 
-  length(szs) > 1 || @warn("Don't use this function for 1D Slepians...")
+  length(szs) > 1 || @warn("Use the tridiagonal form for 1D Slepians.")
 
   if (no == nothing)||(sqwt == nothing)
       # Create quadrature nodes and weights for each dimension:
