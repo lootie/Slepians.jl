@@ -1,7 +1,7 @@
 name = "Slepians"
 uuid = "97caf2bd-9cc0-4738-8821-c8999f46f3c9"
 authors = ["Charlotte Haley <haleycharlotte@gmail.com>"]
-version = "0.1.0"
+version = "0.1.1"
 
 [deps]
 Arpack = "7d9fca2a-8960-54d3-9f78-7d1dccf2cb97"
