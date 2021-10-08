@@ -29,4 +29,10 @@ pkg> add Slepians
 
 # Examples
 
-The jupyter notebooks in the `Examples/` directory 
+The jupyter notebooks in the `Examples/` directory illustrate the functionality
+of this package.
+
+# Funding
+
+This material is based upon work supported by the U.S. Department of Energy, 
+Office of Science, Office of Basic Energy Sciences.
