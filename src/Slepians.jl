@@ -1,6 +1,6 @@
 module Slepians
 
-  using FastGaussQuadrature, IterTools 
+  using FastGaussQuadrature, IterTools, Statistics 
   using FFTW, LinearAlgebra, SpecialFunctions, Arpack, KrylovKit, KernelMatrices 
 
   include("RHMatrix.jl")
