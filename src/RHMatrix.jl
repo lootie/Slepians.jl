@@ -62,7 +62,7 @@ module RHMatrix
 
   matrix(R::RHODLR) = [matrix(R.A11) matrix(R.A12) ; matrix(R.A21) matrix(R.A22)]
 
-  function Base.:*(R::RHODLR, V::Vector)
+  function Base.:*(R::RHODLR, V::Vector{T}) where{T<:ComplexF64}
     ix1 = 1:size(R.A11, 2)
     ix2 = (size(R.A11, 2)+1):size(R, 2)
     return vcat(R.A11*V[ix1] + R.A12*V[ix2], R.A21*V[ix1] + R.A22*V[ix2])
