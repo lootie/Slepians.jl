@@ -10,16 +10,6 @@ on:
     tags: '*'
 jobs:
   test:
-    name: Add custom registry
-    steps:
-      - uses: actions/checkout@v2
-      - uses: julia-actions/add-julia-registry@v1
-        with:
-          registry: lootie/bbkt-reg.jl
-      - uses: julia-actions/setup-julia@v1
-        with:
-          version: 1
-      - uses: julia-actions/julia-runtest@v1
     name: Julia ${{ matrix.version }} - ${{ matrix.os }} - ${{ matrix.arch }} - ${{ github.event_name }}
     runs-on: ${{ matrix.os }}
     strategy:
@@ -35,6 +25,10 @@ jobs:
           - x64
     steps:
       - uses: actions/checkout@v2
+      - uses: julia-actions/add-julia-registry@v1
+        with:
+          registry: lootie/bbkt-reg.jl
+      - uses: julia-actions/julia-runtest@v1
       - uses: julia-actions/setup-julia@v1
         with:
           version: ${{ matrix.version }}
