@@ -35,11 +35,18 @@ end
 
 sleps = customsleps(5, 10.0, (16, 8), exact = true)
 
+sleps_hodlr = customsleps(5, 10.0, (16, 8), exact = false)
+
 @testset "2D Spherical Slepians" begin
 
   @test sleps[1][1:3] ≈ Complex{Float64}[1.4165175331754862 + 0.0im, 1.302170654345073 + 0.0im, 1.1413498706076248 + 0.0im]
 
   # Exact 2D Slepians
   @test sleps[2][2][1:3] ≈ Complex{Float64}[-0.10725724727346368 + 0.0im, -0.17892535707531507 + 0.0im, -0.23728562389432664 + 0.0im]
+
+  # HODLR version
+  @test sleps_hodlr[1][1:3] ≈ Complex{Float64}[1.4165175332530344 + 0.0im, 1.3021706541792697 + 0.0im, 1.1413498706671528 + 0.0im]
+
+  @test sleps_hodlr[2][2][1:3] ≈ Complex{Float64}[-0.10725724727179216 + 0.0im, -0.1789253508692578 + 0.0im, -0.23728562378174453 + 0.0im]
 
 end
