@@ -39,7 +39,20 @@ jobs:
             ${{ runner.os }}-test-${{ env.cache-name }}-
             ${{ runner.os }}-test-
             ${{ runner.os }}-
-      - run: julia -e 'import Pkg; Pkg.Registry.add(Pkg.RegistrySpec(url = "https://github.com/lootie/bbkt-reg.jl"))'
+      script:
+        - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
+        - julia -e 'using Pkg, LibGit2;
+            user_regs = joinpath(DEPOT_PATH[1],"registries");
+            mkpath(user_regs);
+            all_registries = Dict("General" => "https://github.com/JuliaRegistries/General.git",
+                                "HaleyLabRegistry" => "https://github.com/lootie/bbkt-reg.git");
+            Base.shred!(LibGit2.CachedCredentials()) do creds
+            for (reg, url) in all_registries
+                path = joinpath(user_regs, reg);
+                LibGit2.with(Pkg.GitTools.clone(url, path; header = "registry $reg from $(repr(url))", credentials = creds)) do repo end
+            end
+            end'
+      - julia -e 'using Pkg; Pkg.build(); Pkg.test("Slepians"; coverage=false)'
       - uses: julia-actions/julia-buildpkg@v1
       - uses: julia-actions/julia-runtest@v1
       - uses: julia-actions/julia-processcoverage@v1
