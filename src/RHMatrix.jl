@@ -20,6 +20,8 @@ module RHMatrix
   @inline Base.size(UV::UVt{T}, j) where{T} = size(UV)[j]
 
   @inline Base.:*(UV::UVt{T}, v::Vector{T}) where{T} = UV.U*(UV.V'v)
+  
+  @inline Base.:*(UV::UVt{T}, v::Vector{P}) where{T,P} = UV.U*(UV.V'v)
 
   mutable struct RHODLR{T, LF<:LowRankFact}
     A11::Union{Matrix{T}, RHODLR{T}}
@@ -62,7 +64,7 @@ module RHMatrix
 
   matrix(R::RHODLR) = [matrix(R.A11) matrix(R.A12) ; matrix(R.A21) matrix(R.A22)]
 
-  function Base.:*(R::RHODLR, V::Vector{T}) where{T<:ComplexF64}
+  function Base.:*(R::RHODLR, V::Vector)
     ix1 = 1:size(R.A11, 2)
     ix2 = (size(R.A11, 2)+1):size(R, 2)
     return vcat(R.A11*V[ix1] + R.A12*V[ix2], R.A21*V[ix1] + R.A22*V[ix2])
