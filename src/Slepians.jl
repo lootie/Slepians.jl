@@ -10,7 +10,7 @@ module Slepians
   export dpss_tapers
 
   include("gpss.jl")
-  export gpss, gpss_orth
+  export gpss, gpss_orth, mdslepian
 
   include("dDimSleps.jl")
   export dfn, efn, givewts, getnodeswts, customsleps 
