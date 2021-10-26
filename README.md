@@ -38,3 +38,41 @@ This material is based upon work supported by the U.S. Department of Energy,
 Office of Science, Office of Basic Energy Sciences, Division of Materials
 Science and Engineering. 
 
+# References
+
+Please see the below papers
+
+```
+@article{bronez1988spectral,
+  title={Spectral estimation of irregularly sampled multidimensional processes by generalized prolate spheroidal sequences},
+  author={Bronez, Thomas P},
+  journal={IEEE Transactions on Acoustics, Speech, and Signal Processing},
+  volume={36},
+  number={12},
+  pages={1862--1873},
+  year={1988},
+  publisher={IEEE}
+}
+
+@article{slepian1978prolate,
+  title={Prolate spheroidal wave functions, Fourier analysis, and uncertainty—V: The discrete case},
+  author={Slepian, David},
+  journal={Bell System Technical Journal},
+  volume={57},
+  number={5},
+  pages={1371--1430},
+  year={1978},
+  publisher={Wiley Online Library}
+}
+
+@article{simons2011spatiospectral,
+  title={Spatiospectral concentration in the Cartesian plane},
+  author={Simons, Frederik J and Wang, Dong V},
+  journal={GEM-International Journal on Geomathematics},
+  volume={2},
+  number={1},
+  pages={1--36},
+  year={2011},
+  publisher={Springer}
+}
+```
