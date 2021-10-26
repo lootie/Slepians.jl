@@ -1,4 +1,7 @@
 
+*.h5
+*.jld
+
 Examples/obsolete/*
 Doc/*
 Refs/*
