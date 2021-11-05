@@ -1,3 +1,15 @@
+
+# Software note: this code was originally developed by F. Simons and D. Wang in
+# the matlab programming language, and was rewritten in julia for performance.
+# The original code is available at:
+# https://github.com/csdms-contrib/slepian_alpha
+# and is distributed under the GNU GPL v 2.0 license.
+# I take responsibility for any errors in this code as it is not a verbatim copy
+# of the original. In particular, some inbuilt matlab functions (e.g. sub2ind,
+# interp1) have been replaced with Julia ones. 
+
+# This software is licensed to C. L. Haley in 2021 under GNU GPL v 2.0
+
 using Interpolations, PCHIPInterpolation
 
 """ 
@@ -41,6 +53,52 @@ function interp1(x, v, xq, method)
     return interpolant.(xq)
 end
 
+"""
+
+    gamini(data, folding)
+
+# Arguments
+-`data`: some data vector
+-`folding`: The replication factor for every element of the data; if a scalar thsi applies to all of the elements (default 3), if zero or negative, no replication occurs
+
+# Outputs
+-`bigger`
+
+# Example usage
+```
+a, b = degamini(gamini([1, 2, 3, 1, 4, 5], [1, 2, 3, 2, 4, 2]))
+```
+One gets [1, 2, 2, 3, 3, 3, 1, 1, 4, 4, 4, 4, 5, 5] as the intermediate result.
+
+# See also
+@degamini, @gamini2
+"""
+function gamini(data, folding = 3)
+    # Copy a single scalar folding for all elements in the array
+    if prod(size(folding)) == 1
+        folding = repeat(folding, prod(size(data)), 1)
+    end
+    # Never had a replication factor of zero before
+    # But only if they are of the same length!
+    if length(data) == length(folding)
+        ind = findall(f->f>0, folding)
+        data = data[ind]
+        folding = folding[ind]
+    end
+    # Rearrange
+    data = data[:]
+    folding = folding[:]
+    !(size(data) == size(folding)) && error("Sizes of input and folding must be the same.")
+    gelp = zeros(Int64, sum(folding))
+    gelp[vcat(1, cumsum(folding[1:end-1], dims = 1) .+ 1)] .= 1
+    if !isempty(data)
+        bigger  = data[cumsum(gelp, dims = 1)]
+    else
+        bigger = []
+    end
+    return bigger
+end
+
 """ 
 
     degamini(v) 
@@ -61,7 +119,7 @@ answer is dv = [1, 2, 3]; foldi = [1, 2, 1]; be = [1 1; 2 3; 4 4]
 """
 function degamini(v)
     v = v[:]
-    indi = vcat(1, findall(diff(v) .!= 0) .+ 1) # Line 28 of slepian_alpha/degamini.m might not be correct
+    indi = vcat(1, findall(diff(v) .!= 0) .+ 1) 
     dv = v[indi]
     foldi = diff(vcat(indi, length(v) + 1))
     (length(v) != sum(foldi)) && error("Incorrect")
