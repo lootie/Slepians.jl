@@ -47,8 +47,8 @@ interp1(LinRange(0, 1, 10), log10.(LinRange(0, 1, 10)), [0.5, 0.9], :linear)
 ```
 
 """
-function interp1(x, v, xq, method)
-    (method != :linear)||(method != :pchip) && error("Linear Interpolation is the only one implemented here.")
+function interp1(x, v, xq, method = :linear)
+    #(method != :linear)||(method != :pchip) && error("Linear Interpolation is the only one implemented here.")
     interpolant = (method == :linear) ? LinearInterpolation(x, v) : PCHIPInterpolation.Interpolator(x, v)
     return interpolant.(xq)
 end
@@ -176,7 +176,7 @@ end
 @blob
 
 """
-function randcirc(xm = 0.0, ym = 0.0, r = 1.0, dr = 01, N = 10)
+function randcirc(xm = 0.0, ym = 0.0, r = 1.0, dr = 1, N = 10)
     nr = 100
     r = r*ones(N)
     r = r + 2dr*(rand(N) .- 0.5)
@@ -197,7 +197,7 @@ end
 """ 
     blob(N, Nj)
 
-Makes moving picture of a random blob by superposition of random sircles
+Makes moving picture of a random blob by superposition of random circles
 
 # Arguments
 - `N` number of loops for, and if movie, default = 100
@@ -223,4 +223,122 @@ function blob(N = 100, Nj = 10)
         yold = y
     end
     return xx, yy
+end
+
+""" 
+
+    phicurve(thph, th)
+
+Adapted from slepian_alpha; finds the longitude crossings and thus integration domains of a closed curve parameterized in colatitude/longitude space at certian query points of colatitude.
+
+# Arguments
+- `thph::` Colatitude/longitude of the closed curve (degrees)
+- `th::` Colatitude at which crossings are required (degrees)
+
+# Outputs
+- `phint` A matrix with crossings/intervals and zeros of dimensions MxN where M = length(th) and N can be anything depending on the oscillations of the curve
+- `thp` Colatitude matrix for hatched plotting, if possible
+- `php` Longitude matrix for hatched plotting, if possible
+- `forreal` Indices of the ones that are real (could be at zero)
+
+Depends on: @sub2ind, @interp1, @degamini, @matranges, and possibly @blob (demo2)
+"""
+function phicurve(thph, th)
+    # Fore every th, find the relevant phint
+    xmth = repeat(thph[:,1], 1, length(th)) .- repeat(th', length(thph[:,1]), 1)
+    dsx = diff(sign.(xmth), dims = 1)
+    # It can be the one before, or after the crossing
+    # colf, colj = findall(x -> (x != 0.0), dsx)
+    col = findall(x -> (x != 0.0), dsx)
+    colf, colj = (map(c -> Tuple(c)[1], col), map(c -> Tuple(c)[2], col))
+    # colr = sub2ind(dsx, colf, colj) 
+    colr = LinearIndices(dsx)[col]
+    # This returns the one on the negative side of hte line
+    # add one to colx if the difference is -2; add one to colx2 if the difference is 2
+    colx = colf .+ (dsx[colr] .== -2) # DOT was missing here in parentheses
+    colx2 = colf .+ (dsx[colr] .== 2)
+    L = length(colx)
+    (L%2 == 1) && error("Cannot find pairs of crossings.")
+    phint = zeros(L)
+    # Then one point was exactly hit, this is the thN or the thS case
+    if length(colx) == 2 && colx == colx2
+        phint = thph[hcat(colx[2], colx2[2]), 2]
+        thp = hcat(th, th)
+        php = phint
+    else
+        for ond = 1:L
+            # In case you have a node immediately followed by a crossing
+            phint[ond] = (colx[ond] == colx2[ond]) ? NaN : interp1(xmth[hcat(colx[ond], colx2[ond]), colj[ond]][:], thph[hcat(colx[ond], colx2[ond]),2][:], 0, :linear) 
+        end
+    end
+    # If the NaNs are not consecutive pairs, get special case
+    # Now rearrange back othte number of requested points
+    # There could be points with more or less than two crossings
+    # Maximum number of times a crossing is repeated
+    a, b =  degamini(colj) 
+    rowj = copy(colj)
+    colj = matranges(Int64.(reshape(hcat(ones(length(b)), b)', length(b)*2, 1)))
+    pint = repeat([NaN], length(th), maximum(b))
+    subsi = (colj .- 1) .* length(th) .+ rowj # Linear index
+    pint[subsi] = phint
+    wt, thp = (length(b) == length(th)) ? (0, reshape(gamini(th, b), (2, Int64(length(phint)/2)))) : (1, [])
+    # Need to sort since contour may be given in any order
+    phint = sort(pint, dims = 2)
+    php = (wt == 0) ? reshape(phint[subsi], (2, Int64(length(colj)/2))) : [] # line 95
+    # Make them zero so the integral doesn't do anything
+    forreal = map(x -> !isnan(x), phint)
+    phint[findall(isnan, phint)] .= 0.0
+    # note: can use (demo2)
+    # x,y=blob(1,1); thph=hcat(y[:],x[:]); Nth = ceil(rand*300); th=LinRange(minimum(thph[:,1]), maximum(thph[:,1]), Nth)
+    return phint, thp, php, forreal
+end
+
+""" Scale the quaduature points and weights """
+function quadpts(qx, Nqx, qy, forreal, xints, wqx, wqy)
+    Nall = Int64(sum(forreal[:])/2)
+    # Initialize quadrature points
+    QX = repeat([NaN], Nqx, Nall)
+    QY = repeat([NaN], Nqx, Nall)
+    w = repeat([NaN], Nqx, Nall)
+    Nrun = 0
+    for yindex = 1:length(qy)
+        # How many horizontal intervals at this y?
+        Nxint = Int64(sum(forreal[yindex,:])/2)
+        abset = reshape(xints[yindex, 1:Nxint*2], 2, Nxint)
+        # beginning and endpoints of those intervals
+        a = abset[1,:]
+        b = abset[2,:]
+        # produce the scaled nodes, a column per interval
+        exs = repeat(a', length(qx), 1) .+ (qx .+ 1)/2 .* (b .- a)'
+        # scatter!(p, exs, -0.5*ones(32), marker = :o)
+        # And produce the weights that go with it 
+        # and multiply it with the current y node and weight 
+        # and produce copies of the y nodes, as many as needed 
+        # and put them into two big vectors of weights and points
+        QX[:, (Nrun+1):(Nrun+Nxint)]= exs
+        QY[:, (Nrun+1):(Nrun+Nxint)] = repeat([qy[yindex]], size(exs)...)
+        w[:, (Nrun+1):(Nrun+Nxint)] = wqx.*((b.-a)'/2)*wqy[yindex]
+        Nrun = Nrun + Nxint
+    end
+    return QX, QY, w, Nrun
+end
+
+sign(x) = (x >= 0.0) ? 1 : -1
+
+function get_quadrature_nodes_2D(x, y, Nqx = 32, Nqy = 32)
+    #println("Gauss-Legendre method with ($Nqx, $Nqy) integration nodes.")
+
+    # Calculate blanks, xaxis GL points regardless of the data range
+    qx, wqx = FastGaussQuadrature.gausslegendre(Nqx)
+    qy, wqy = FastGaussQuadrature.gausslegendre(Nqy)
+    
+    mn, mx = (minimum(y), maximum(y))
+    # Scale the y-quadrature points to the min-max interval
+    th = qy*(abs(mx - mn)/2) .+ (mx + mn)/2
+
+    # For each of these points in y find the appropriate ranges of x's
+    xints,yp,xp,forreal = phicurve(hcat(y, x), th) 
+    QX, QY, w, Nrun = quadpts(qx, Nqx, th, forreal, xints, wqx, wqy)
+
+    return QX, QY, w, Nrun
 end
