@@ -293,7 +293,27 @@ function phicurve(thph, th)
     return phint, thp, php, forreal
 end
 
-""" Scale the quaduature points and weights """
+""" 
+    quadpts(qx, Nqx, qy, forreal, xints, wqx, wqy)
+
+Scale the quaduature points and weights 
+
+# Arguments
+- `qx` 
+- `Nqx`
+- `qy`
+- `forreal`
+- `xints`
+- `wqx`
+- `wqy`
+
+# Outputs
+- `QX` Quadrature points in x
+- `QY` Quadrature points in y
+- `w` Quadrature weights
+- `Nrun` Number of horizontal line segments in the domain
+
+"""
 function quadpts(qx, Nqx, qy, forreal, xints, wqx, wqy)
     Nall = Int64(sum(forreal[:])/2)
     # Initialize quadrature points
