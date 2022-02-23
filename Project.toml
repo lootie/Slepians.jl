@@ -23,7 +23,7 @@ FastGaussQuadrature = "0.4"
 RecipesBase = "1"
 FFTW = "1"
 IterTools = "1"
-FINUFFT = "3"
+FINUFFT = "2,3"
 KrylovKit = "0.5"
 SpecialFunctions = "2"
 
