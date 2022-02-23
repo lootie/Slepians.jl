@@ -20,6 +20,8 @@ module RHMatrix
   @inline Base.size(UV::UVt{T}, j) where{T} = size(UV)[j]
 
   @inline Base.:*(UV::UVt{T}, v::Vector{T}) where{T} = UV.U*(UV.V'v)
+  
+  @inline Base.:*(UV::UVt{T}, v::Vector{P}) where{T,P} = UV.U*(UV.V'v)
 
   mutable struct RHODLR{T, LF<:LowRankFact}
     A11::Union{Matrix{T}, RHODLR{T}}
