@@ -1,4 +1,8 @@
 
+*.h5
+*.jld
+
+Examples/obsolete/*
 Doc/*
 Refs/*
 Slides/*
@@ -6,6 +10,7 @@ Slides/*
 docs/build/*
 
 Manifest.toml
+docs/Manifest.toml
 
 *.swp
 *.gif
