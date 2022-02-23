@@ -27,6 +27,9 @@ module Slepians
   include("ext.jl")
   export customsleps_ext
 
+  include("adapt3D.jl")
+  export interp2, interpcontour
+
 end 
 
 # module
