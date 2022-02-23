@@ -50,7 +50,7 @@ If you do not supply your own nodes, the region of interest in space is assumed 
 be rectangular. If you want something other than this, you'll provide your own
 gauss-legendre nodes in the no and sqwt field.
 """
-function customsleps(M, Kp, szs; prec = 1.0e-8, exact = false, lvl = 6, maxrank = 0, 
+function customsleps(M::Int64, Kp, szs; prec = 1.0e-8, exact = false, lvl = 6, maxrank = 0, 
     no = nothing, sqwt = nothing, int = nothing)
 
   if typeof(Kp) <: Float64 
