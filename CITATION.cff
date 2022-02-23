@@ -1,0 +1,10 @@
+cff-version: 0.1.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Haley"
+  given-names: "Charlotte"
+  orcid: "https://orcid.org/0000-0003-3996-773X"
+title: "Slepians.jl"
+version: 2.0.4
+date-released: 2021-09-29
+url: "https://github.com/lootie/Slepians.jl"

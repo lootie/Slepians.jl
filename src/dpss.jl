@@ -1,5 +1,13 @@
 
-# GNU GPL v2 licenced to C. Haley and C. Geoga 12/2019
+# GNU GPL v2 licenced to C. Haley 10/2021
+# This code originally belonged to Multitaper.jl, by Haley & Geoga
+
+function get_plan(n)
+  work1 = zeros(ComplexF64, n)
+  work2 = zeros(ComplexF64, n)
+  plan  = plan_fft!(work1)
+  (work1, work2, plan)
+end
 
 function conv(x,y)
   @assert length(x) == length(y) "This convolution only supports equal length"

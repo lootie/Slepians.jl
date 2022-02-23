@@ -147,3 +147,57 @@ function gpss_orth(w::Float64, k::Int64, t::Union{Vector{Int64},Vector{Float64}}
   return (lambda, u)
 end
 
+"""
+    mdslepian(w, k, t)
+
+Generalized prolate spheroidal sequences for the 1D missing data problem
+
+...
+
+# Arguments
+
+## Positional Arguments
+
+ - `w::Float64`: the bandwidth
+
+ - `k::Int64`: number of Slepian tapers, must be <=2*bw*length(x) 
+
+ - `t::Vector{Int64}`: vector containing the time indices
+
+...
+
+...
+
+# Outputs
+
+ - `lambda,u::Tuple{Vector{Float64}, Vector{Float64}}`: tuple containing the 
+ concentrations and the tapers
+
+...
+
+See also: [`mdmultispec`](@ref), [`gpss`](@ref)
+
+"""
+function mdslepian(w, k, t)
+  n           = length(t)
+  a           = 2*w*ones(n,n)
+  for i = 1:n
+      j       = i .+ 1:n
+      a[i,j]  = sin.(2*pi*w*(t[i] .- t[j]))./(pi*(t[i] .- t[j]))
+      a[j,i]  = a[i,j]
+  end
+  lambda,v  = eigs(a, nev = k, which = :LR)
+  u         = copy(v)
+  for i = 1:2:k
+      if mean(real.(u[:,i])) < 0 
+        u[:,i] = -u[:,i] 
+      end
+  end
+  for i = 2:2:k-1
+      if real(u[2,i] - u[1,i]) < 0
+        u[:,i] = -u[:,i] 
+      end
+  end
+  return (lambda, u)
+end
+
