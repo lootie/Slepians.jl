@@ -1,4 +1,4 @@
-using Slepians, FastGaussQuadrature
+using Slepians, FastGaussQuadrature, Dierckx
 
 """
 
@@ -32,8 +32,9 @@ function scale_quad_nodez(Nqz, z)
     return colf, th, wqz
 end
 
+#=
 """
-    interpcontour(z, z0, thph)
+    interpcontourvec(z, z0, thph)
 
 # Arguments
 - `z::Vector` the two z-values between which the level z0 falls. 
@@ -45,12 +46,12 @@ function interpcontourvec(z, z0, thph, N)
     thph_long, thph_short = (ind == 1) ? (thph[1:Nmax,:], thph[(Nmax + 1):end,:]) : (thph[1:(end - Nmax - 1),:], thph[(end - Nmax):end,:])
     newcurve = zeros(Nmax, 3)
     for j in 1:Nmax
-        # Note that I cheated here - the comment on the next line doesn't give the correct result!
-        closest = j #findmin(sum(abs2.(repeat(thph_long[j,2:3]', size(thph_short,1), 1) .- thph_short[2:3]), dims=2))[2][1]
+        closest = j 
         newcurve[j,:] = interp2(z, vcat(thph_long[j,:]', thph_short[closest,:]'), z0)
     end
     return newcurve
 end
+=#
 
 """
 
@@ -71,8 +72,8 @@ Fill each 2D level with nodes in x and y
 
 """
 function fill2d(z, colf, thpha, th, Nqx, Nqy)
-    N = map(i -> size(thpha[i], 1), 1:length(thpha))
-    newcurve = map(i -> interpcontourvec(Float64.(z[colf[i]:(colf[i] + 1)]), th[i], vcat(thpha[colf[i]], thpha[(colf[i] + 1)]), N[colf[i]:(colf[i] + 1)]), 1:length(th))
+    N = size(thpha[1], 1)
+    newcurve = map(i -> interpcontour(Float64.(z[colf[i]:(colf[i] + 1)]), th[i], vcat(thpha[colf[i]], thpha[(colf[i] + 1)]), N), 1:length(th))
     pkg = map(nc -> get_quadrature_nodes_2D(nc[:,3], nc[:,2], Nqx, Nqy), newcurve);
     return newcurve, pkg
 end
@@ -109,6 +110,28 @@ function getnodeswts3d(szs, pkg, th, wqz)
     return no, sqwt, ev
 end
 
+""" 
+    respline(x, y, N)
+
+Use a 2D parametric B-spline to interpolate the closed curve to N points
+
+# Arguments
+- `x`: vector of x-coordinates
+- `y`: vector of y-coordinates
+- `N`: number of desired output points
+
+# Outputs
+- a matrix of size 2 x N in [y, x] order containing the splined coordinates
+
+"""
+function respline(x, y, N)
+    ps = ParametricSpline(vcat(y', x'); s=0.0)
+    return evaluate(ps,  LinRange(0, 1, N))
+end
+
+""" Spline all curves to have the same number of points """
+equalNclosedcurve(thpha, N) = map(thph -> (length(thph) == N) ? thph : hcat(thph[1,1]*ones(N), respline(thph[:,3], thph[:,2], N)'), thpha)
+
 """
 
     slepian3(szs, N, z, thpha; <kwargs>)
@@ -117,7 +140,6 @@ Compute the 3D localization problem with boundary defined as a set of stacked co
 
 # Arguments
 - `szs::Tuple{Int64}`: number of quadrature nodes in each dimension
-- `N::Union{Int64, Array{Int64}}`: Number of points in each closed curve
 - `z`: Levels in z given. These must correspond to the order in thpha
 - `thpha`: The array of arrays of closed curves where the columns are in order (z, y, x)
 
@@ -135,18 +157,22 @@ Compute the 3D localization problem with boundary defined as a set of stacked co
 - `sl`: eigenvalues
 
 """
-function slepian3(szs, N::Int64, z, thpha; M = 3, Kp = [4.0], exact = false,
+function slepian3(szs, z, thpha; M = 3, Kp = [4.0], exact = false,
                     prec = 1e-8, lvl = 6, 
                     maxrank = 256, int = szs)
     Nqx, Nqy, Nqz = szs 
     # compute the nodes - first scale in z
     colf, th, wqz = scale_quad_nodez(Nqz, z)
+    # Make sure the closed contours have the same number of points
+    N = maximum(size.(thpha,1))
+    thpha = equalNclosedcurve(thpha, N)
+    
     # compute the quad nodes in 2d at each level
     pkg = fill2d(z, colf, thpha, th, Nqx, Nqy)[2]
-
+    
     # collate nodes weights
     no, sqwt, ev = getnodeswts3d(szs, pkg, th, wqz)
-
+    
     # do the integration
     s, sl = customsleps_ext(M, Kp, szs, prec = prec, exact = exact, lvl = lvl, maxrank = maxrank, no = no,
             sqwt = sqwt, int = nothing, ev = ev);
