@@ -2,7 +2,7 @@
 # Software note: this code was originally developed by F. Simons and D. Wang in
 # the matlab programming language, and was rewritten in julia for performance.
 # The original code is available at:
-# https://github.com/csdms-contrib/slepian_alpha
+# https://github.com/csdms-contrib/slepian_{alpha,foxtrot}
 # and is distributed under the GNU GPL v 2.0 license (original license below).
 # I take responsibility for any errors in this code as it is not a verbatim copy
 # of the original. In particular, some inbuilt matlab functions (e.g. sub2ind,
