@@ -355,6 +355,8 @@ function get_quadrature_nodes_2D(x, y, Nqx = 32, Nqy = 32)
     mn, mx = (minimum(y), maximum(y))
     # Scale the y-quadrature points to the min-max interval
     th = qy*(abs(mx - mn)/2) .+ (mx + mn)/2
+    # Also scale the weights
+    qy = qy*(mx-mn)/2
 
     # For each of these points in y find the appropriate ranges of x's
     xints,yp,xp,forreal = phicurve(hcat(y, x), th) 

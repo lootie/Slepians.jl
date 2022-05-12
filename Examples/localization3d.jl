@@ -32,27 +32,6 @@ function scale_quad_nodez(Nqz, z)
     return colf, th, wqz
 end
 
-#=
-"""
-    interpcontourvec(z, z0, thph)
-
-# Arguments
-- `z::Vector` the two z-values between which the level z0 falls. 
-- `z0<:Number` the z-level of the desired contour
-- `thph::Matrix` the array of arrays of zyx coordinates (first N are at level z[1] second are at level z[2])
-"""
-function interpcontourvec(z, z0, thph, N)
-    Nmax, ind = findmax(N)
-    thph_long, thph_short = (ind == 1) ? (thph[1:Nmax,:], thph[(Nmax + 1):end,:]) : (thph[1:(end - Nmax - 1),:], thph[(end - Nmax):end,:])
-    newcurve = zeros(Nmax, 3)
-    for j in 1:Nmax
-        closest = j 
-        newcurve[j,:] = interp2(z, vcat(thph_long[j,:]', thph_short[closest,:]'), z0)
-    end
-    return newcurve
-end
-=#
-
 """
 
     fill2d(colf, thpha, th, Nqx, Nqy, N)
@@ -125,12 +104,23 @@ Use a 2D parametric B-spline to interpolate the closed curve to N points
 
 """
 function respline(x, y, N)
-    ps = ParametricSpline(vcat(y', x'); s=0.0)
+    ps = ParametricSpline(vcat(y', x'); s=0.0, k=1)
     return evaluate(ps,  LinRange(0, 1, N))
 end
 
 """ Spline all curves to have the same number of points """
-equalNclosedcurve(thpha, N) = map(thph -> (length(thph) == N) ? thph : hcat(thph[1,1]*ones(N), respline(thph[:,3], thph[:,2], N)'), thpha)
+function equalNclosedcurve(thpha, N) 
+    output = []
+    for thph in thpha
+        if (length(thph) == N)
+            push!(output, thph) 
+        else
+            try push!(output, hcat(thph[1,1]*ones(N), respline(thph[:,3], thph[:,2], N)')) catch; [] end
+            #push!(output, hcat(thph[1,1]*ones(N), res))
+        end
+    end
+    return output
+end
 
 """
 
