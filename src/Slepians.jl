@@ -1,12 +1,12 @@
 module Slepians
 
   using FastGaussQuadrature, IterTools, Statistics 
-  using FFTW, LinearAlgebra, SpecialFunctions, Arpack, KrylovKit, KernelMatrices 
+  using FFTW, LinearAlgebra, SpecialFunctions, Arpack, KrylovKit #, KernelMatrices 
   using Interpolations, PCHIPInterpolation
 
 
-  include("RHMatrix.jl")
-  using .RHMatrix
+  # include("RHMatrix.jl")
+  # using .RHMatrix
 
   include("dpss.jl")
   export dpss_tapers
@@ -15,7 +15,7 @@ module Slepians
   export gpss, gpss_orth, mdslepian
 
   include("dDimSleps.jl")
-  export dfn, efn, givewts, getnodeswts, customsleps 
+  export dfn, efn, givewts, getnodeswts #, customsleps 
 
   include("relevant_slepian_alpha.jl")
   export interp1, gamini, degamini, matranges, randcirc, blob, phicurve, quadpts
@@ -24,8 +24,8 @@ module Slepians
   include("bdy2d.jl")
   export getbdypts_2d, findnst, closedcurve_2d, mask2closedcurve
 
-  include("ext.jl")
-  export customsleps_ext
+  # include("ext.jl")
+  # export customsleps_ext
 
   include("adapt3D.jl")
   export interp2, interpcontour
