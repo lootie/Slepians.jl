@@ -12,6 +12,4 @@ main functions here.
 
 ```@docs
 dpss_tapers
-gpss
-customsleps
 ```

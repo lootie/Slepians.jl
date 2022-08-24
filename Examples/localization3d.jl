@@ -23,6 +23,8 @@ function scale_quad_nodez(Nqz, z)
     mn, mx = (minimum(z), maximum(z))
     # Scale the z-quadrature points to the min-max interval
     th = qz*(abs(mx - mn)/2) .+ (mx + mn)/2;
+    # Scale the weights
+    wqz = wqz*(mx - mn)/2
 
     # We need to find the two z's between which each quadrature point (th) lives
     xmth = repeat(z, 1, length(th)) .- repeat(th', length(z), 1)

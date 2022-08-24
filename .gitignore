@@ -11,6 +11,7 @@ docs/build/*
 
 Manifest.toml
 docs/Manifest.toml
+docs/src/build/*
 
 *.swp
 *.gif
