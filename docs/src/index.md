@@ -10,6 +10,7 @@ main functions here.
 
 # Index of functions
 
-```@docs
-dpss_tapers
+```@autodocs
+Modules = [Slepians]
+Order   = [:function, :type]
 ```

@@ -2,6 +2,17 @@
 # GNU GPL v2 licenced to C. Haley 10/2021
 # This code originally belonged to Multitaper.jl, by Haley & Geoga
 
+"""
+    get_plan(n)
+
+Obtain an FFT plan
+
+# Arguments
+- `n::Int64`: Length of the FFT plan
+
+# Outputs
+- Tuple containing two ComplexF64 arrays of length `n` and an FFT plan
+"""
 function get_plan(n)
   work1 = zeros(ComplexF64, n)
   work2 = zeros(ComplexF64, n)
@@ -9,6 +20,20 @@ function get_plan(n)
   (work1, work2, plan)
 end
 
+
+"""
+    conv(x,y)
+
+Convolves two arrays of the same length using FFT algorithm
+
+# Arguments
+- `x::Array{Number}`: first array
+- `y::Array{Number}`: second array
+
+# Outputs
+- Array containing the real part of the convolution of x and y 
+
+"""
 function conv(x,y)
   @assert length(x) == length(y) "This convolution only supports equal length"
   len = nextprod([2,3,5,7], 2*length(x)-1)
@@ -24,8 +49,22 @@ function conv(x,y)
   isreal(x) ? real(work1) : work1
 end
 
-""" Eigenvalues/concentrations for the  Slepian sequences.   
-They are computed as given in Percival 390, BUT THERE IS A TYPO IN PERCIVAL 390 """
+""" 
+
+    dpss_eigval(dpVecs, n, nw, ntapers)
+
+Eigenvalues/concentrations for the Slepian sequences, given the vectors (Percival 390)
+
+# Arguments
+- `dpVecs`: (n x ntapers) Matrix in which Slepian eigenvectors are the columns
+- `n`: Integer length of the data
+- `nw`: Float time bandwidth product
+- `ntapers`: Integer number of tapers
+
+# Outputs
+- `eeigvalss`: Vector of lengthh `ntapers` containing the eigenvalues
+
+"""
 function dpss_eigval(dpVecs, n, nw, ntapers)
   sincvec  = [sin(2*pi*nw*j/n)/(pi*j) for j in 1:(n-1)]
   q_tau    = mapreduce(x -> conv(x, x)[n:(2*n-1)], hcat, eachcol(dpVecs))
