@@ -1,6 +1,6 @@
 # Slepians.jl
 
-[![](https://img.shields.io/badge/docs-stable-blue.svg)](https://lootie.github.io/Slepians.jl/stable)
+[![](https://img.shields.io/badge/docs-stable-blue.svg)](https://lootie.github.io/Slepians.jl/dev)
 [![](https://img.shields.io/badge/docs-dev-blue.svg)](https://lootie.github.io/Slepians.jl/dev)
 
 Slepians.jl is a package that solves the concentration problem of Slepian,
