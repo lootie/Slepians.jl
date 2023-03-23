@@ -30,16 +30,110 @@ bibliography: paper.bib
 In a series of six landmark papers of Slepian, Landau, and Pollak, a set of functions
 are described which solve what is known as the ``concentration problem". The
 concentration problem refers to the problem of functions having limited support in,
-say, time, while simultaneously having the bulk of its nonzero mass in a small
-constrained interval centered at the origin. While in some special discrete cases, it
-is possible to solve a simple eigenvalue problem, in others it is necessary to use
-numerical integration. This package produces function values where the problem is
-from one to three dimensional. We rely on the work of Simons, Wang, [@SimonsWang2011]
-and others, for the two dimensional case but to our knowledge the three dimensional
-case is novel to this package. In addition, we implement the missing data Slepian
-sequences of Chave [@chave] as well as the generalized Slepian sequences of Bronez
-[@bronez1988] which solve the 2D concentration problem on an unequally spaced spatial 
-grid.
+say, time, while simultaneously having a Fourier transform for which the bulk of
+its nonzero mass in a small constrained interval. While in some special discrete
+cases, it is possible to solve a simple eigenvalue problem, in others it is necessary
+to use numerical integration. This package produces function values where the problem
+is from one to three dimensional. We rely on the work of Simons, Wang,
+[@SimonsWang2011] and others, for the two dimensional case but to our knowledge the
+three dimensional case is novel to this package. In addition, we implement the
+missing data Slepian sequences of Chave [@chave] as well as the generalized Slepian
+sequences of Bronez [@bronez1988] which solve the 2D concentration problem on an
+unequally spaced spatial grid.
+
+# Mathematical Preliminaries
+
+The concentration problem of Slepian, Landau and Pollak, seeks to find bandlimited functions
+$g(t)$, i.e. functions satisfying 
+
+$$ g(t) = \frac{1}{2 \pi} \int_{-W}^{W} G(\omega) e^{i\omega t} d\omega $$
+
+where $G(\omega)$ denotes the Fourier transform of the function $g(t)$, i.e.
+
+$$ G(\omega) = \int_{-\infty}^{\infty} f(t) e^{-i\omega t} dt $$
+
+that maximize the ratio 
+
+$$ \lambda = \frac{\int_{-T}^{T} g^2(t)dt}{\int_{-\infty}^{\infty} g^2(t)dt}. $$
+
+$\lambda$ is referred to as the concentration. It was shown that these functions
+satisfy the Fredholm integral equation of the second kind
+
+$$ \int_{-T}^{T} \frac{\sin [W (t - s)]}{\pi (t-s)} g(s)ds = \lambda g(t) $$
+
+for real $t$. 
+
+## Discrete prolate spheroidal sequences
+
+The discrete prolate spheroidal sequences [@Slepian1978], $v_n^{(k)}(N,W)$, are the
+discrete analog to the above functions $g(t)$. As such, they are the eigenvector
+solutions to the eigenvalue problem
+
+$$\sum_{m = 0}^{N-1}\frac{\sin 2\pi W(n-m)}{\pi(n-m)}v_m^{(k)}(N,W) = \lambda_k(N,W)\cdot v_n^{(k)}(N,W)$$
+
+where $N$ is the length of the sequence, $n = 0, \ldots, N-1$, $W$ is the bandwidth,
+$K$ is the number of tapers, and $\lambda_k(N,W)$ is the eigenvalue corresponding to
+the $k$th taper. 
+
+The dpss's solve the problem of concentrating, in frequency, the most amount of mass
+under the interval $(-W,W)$, while having only finite extent in time. The first $2NW$
+tapers have eigenvalues close to one, whereby their magnitude drops off rapidly
+thereafter. 
+
+Of note is that the dpss's are never computed using the above equation because of
+numerical instability. Grunbaum [@grunbaum1981] showed that the associated differential operator
+commutes with a symmetric tridiagonal matrix $T$, which is
+
+$$ T_{nn} = [(N-1-2n)/2]^2 \cos (2\pi W), \quad n = 0, \ldots, N-1$$
+
+on the diagonal and 
+
+$$ T_{n, n + 1} = T_{n, n-1} = (n + 1)(N - n - 1)/2, \quad n = 0, \ldots, N-2$$
+
+on the sub and super diagonals. The matrix $T$ has the same eigenvectors as the
+problem above and the eigenvalues can be found by substitution into the original
+equation. The tridiagonal formulation reduces the computation to one which is soluble
+in O($N$) time, and the solution tends to be more accurate.
+
+Show a figure as an example.
+
+Generate a Durrani-Chapman filter
+
+## Generalized Prolate Spheroidal Sequences 
+ 
+The missing-data multitaper method requires its own set of optimal tapers
+\cite{T82,bronez88,chave2019multitaper}, the \emph{missing-data prolate spheroidal
+sequences} or missing-data Slepian sequences. These sequences extend the notion of
+maximally bandlimited orthogonal sequences, \cite{S78}, to those sampled on a grid
+where there is missing-data.  Define the bandwidth $W$ for the desired spectral
+window, and let the sequences be given on the length $N$ index set
+$\{t_n\}_{n=0}^{N-1}$ with unit sampling except where there are gaps. 
+
+The missing-data Slepian sequences solve the eigenvalue problem, equations (21)-(23) in [@Chave2019],
+$$ \label{eq:mdslep} 
+  \lambda_k v^{k}_{n} = \sum_{m=0}^{N-1} \frac{\sin 2\pi W (t_n - t_m) }{\pi (t_n - t_m)} v^{k}_{m}.$$
+The $k$th missing-data Slepian sequence is denoted $v^{k}_{n}$ at time $t_n$, and
+and $\lambda_k$ is its associated eigenvalue, sorted in decreasing order
+$1>\lambda_0>\lambda_1>\ldots>\lambda_{N-1}>0$. Note that both of these explicitly
+depend on $N$ and $W$, but for simplicity this is suppressed in the notation. When
+there are no missing values, the sinc-like matrix in \eqref{eq:mdslep} is
+Toeplitz and has a special form which allows for numerically effective eigenvalue
+routines.  
+
+By applying the nonuniform discrete Fourier transform to the generalized data taper
+in \eqref{eq:mdslep}, one obtains the missing-data prolate spheroidal functions, or
+\emph{missing-data Slepian functions}
+
+$$ V^{k}(f) = \sum_{n = 0}^{N-1} v^{k}_{n} e^{-2 \pi i t_n f}. $$
+
+The missing-data Slepian sequences form an orthonormal set on the grid
+$\{t_n\}_{n=0}^{N-1}$; and the missing-data Slepian functions are orthonormal on
+$(-1/2,1/2)$ and orthogonal on $(-W,W)$. 
+
+Show a figure as an example
+
+
+
 
 # Statement of need
 
