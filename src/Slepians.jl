@@ -2,7 +2,7 @@ module Slepians
 
   using FastGaussQuadrature, IterTools, Statistics 
   using FFTW, LinearAlgebra, SpecialFunctions, Arpack, KrylovKit #, KernelMatrices 
-  using Interpolations, PCHIPInterpolation
+  using Interpolations #, PCHIPInterpolation
 
 
   # include("RHMatrix.jl")
