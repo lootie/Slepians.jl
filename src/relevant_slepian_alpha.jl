@@ -10,7 +10,7 @@
 
 # This software is licensed to C. L. Haley in 2021 under GNU GPL v 2.0
 
-using Interpolations, PCHIPInterpolation
+using Interpolations #, PCHIPInterpolation
 
 """ 
 
