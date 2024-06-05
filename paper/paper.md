@@ -32,9 +32,9 @@ are described which solve what is known as the ``concentration problem". The
 concentration problem refers to the problem of functions having limited support in,
 say, time, while simultaneously having a Fourier transform for which the bulk of
 its nonzero mass in a small constrained interval. While in some special discrete
-cases, it is possible to solve a simple eigenvalue problem, in others it is necessary
+cases, it is possible to solve a simple, possibly tridiagonal or Toeplitz eigenvalue problem, in others it is necessary
 to use numerical integration. This package produces function values where the problem
-is from one to three dimensional. We rely on the work of Simons, Wang,
+dimension is up to three. We rely on the work of Simons, Wang,
 [@SimonsWang2011] and others, for the two dimensional case but to our knowledge the
 three dimensional case is novel to this package. In addition, we implement the
 missing data Slepian sequences of Chave [@chave] as well as the generalized Slepian

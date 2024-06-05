@@ -1,4 +1,4 @@
-using Slepians, FastGaussQuadrature, Dierckx
+using FastGaussQuadrature, Dierckx
 
 """
 
