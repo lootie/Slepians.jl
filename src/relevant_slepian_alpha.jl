@@ -176,7 +176,7 @@ end
 @blob
 
 """
-function randcirc2(xm = 0.0, ym = 0.0, r = 1.0, dr = 1, N = 10)
+function randcirc(xm = 0.0, ym = 0.0, r = 1.0, dr = 1, N = 10)
     nr = 100
     r = [r + 2*dr*(rand() .- 0.5) for x in 1:N]
     r = vcat(r[end],r,r[1])
