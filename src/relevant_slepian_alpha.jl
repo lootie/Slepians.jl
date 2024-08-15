@@ -10,7 +10,7 @@
 
 # This software is licensed to C. L. Haley in 2021 under GNU GPL v 2.0
 
-using Interpolations #, PCHIPInterpolation
+using Interpolations 
 
 """ 
 
@@ -43,13 +43,12 @@ https://www.mathworks.com/help/matlab/ref/interp1.html?s_tid=doc_ta
 # Example usage
 
 ```
-interp1(LinRange(0, 1, 10), log10.(LinRange(0, 1, 10)), [0.5, 0.9], :linear)
+interp1(LinRange(0, 1, 10), log10.(LinRange(0, 1, 10)), [0.5, 0.9])
 ```
 
 """
-function interp1(x, v, xq, method = :linear)
-    #(method != :linear)||(method != :pchip) && error("Linear Interpolation is the only one implemented here.")
-    interpolant = (method == :linear) ? LinearInterpolation(x, v) : PCHIPInterpolation.Interpolator(x, v)
+function interp1(x, v, xq)
+    interpolant = LinearInterpolation(x, v) 
     return interpolant.(xq)
 end
 
