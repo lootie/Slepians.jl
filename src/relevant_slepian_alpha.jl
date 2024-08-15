@@ -176,22 +176,24 @@ end
 @blob
 
 """
-function randcirc(xm = 0.0, ym = 0.0, r = 1.0, dr = 1, N = 10)
+function randcirc2(xm = 0.0, ym = 0.0, r = 1.0, dr = 1, N = 10)
     nr = 100
-    r = r*ones(N)
-    r = r + 2dr*(rand(N) .- 0.5)
-    t = LinRange(0, 2*pi*N/(N+1), N)
+    r = [r + 2*dr*(rand() .- 0.5) for x in 1:N]
+    r = vcat(r[end],r,r[1])
+    t = -1.:1:N
     
-    r = vcat(r,r,r)
-    t = vcat(t .- 2 * pi, t, t .+ 2 *pi)
+    itp = interpolate(r, BSpline(Cubic(Line(OnGrid()))))
+    sitp = scale(itp, t)
+    xfine = 0.0:.01:N
+    xs = [sitp(x) for x in xfine]
+
+    p1 = scatter(xfine, xs)
+    scatter!(t, r)
+
+    p2 = scatter()
+    scatter!(p2, r.*cos.(2*pi*t), r.*sin.(2*pi*t))
     
-    tt = LinRange(0, 2*pi, nr)
-    rr = interp1(t, r, collect(tt), :pchip)
-    
-    x = @. xm + rr * cos(tt)
-    y = @. ym + rr * sin(tt)
-    
-    return x, y
+    return xm .+ xs.*cos.(2*pi*xfine/N), ym .+ xs.*sin.(2*pi*xfine/N)
 end
 
 """ 
