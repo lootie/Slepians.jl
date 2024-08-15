@@ -187,12 +187,6 @@ function randcirc2(xm = 0.0, ym = 0.0, r = 1.0, dr = 1, N = 10)
     xfine = 0.0:.01:N
     xs = [sitp(x) for x in xfine]
 
-    p1 = scatter(xfine, xs)
-    scatter!(t, r)
-
-    p2 = scatter()
-    scatter!(p2, r.*cos.(2*pi*t), r.*sin.(2*pi*t))
-    
     return xm .+ xs.*cos.(2*pi*xfine/N), ym .+ xs.*sin.(2*pi*xfine/N)
 end
 
